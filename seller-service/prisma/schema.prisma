@@ -1,0 +1,61 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("APP_DATABASE_URL")
+}
+
+model Seller {
+  id      String   @id
+  name    String
+  apiKeys ApiKey[]
+  Deal    Deal[]
+}
+
+model ApiKey {
+  id       String @id
+  key      String @unique
+  sellerId String
+  seller   Seller @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+}
+
+enum Currency {
+  GBP
+  USD
+  EUR
+}
+
+enum Status {
+  available
+  sold
+}
+
+model Item {
+  id     String @id
+  name   String
+  price  Int
+  deal   Deal   @relation(fields: [dealId], references: [id])
+  dealId String
+}
+
+model Deal {
+  id         String   @id
+  name       String
+  totalPrice Int
+  currency   Currency @default(GBP)
+  discount   Json?
+  status     Status
+  items      Item[]
+  seller     Seller   @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  sellerId   String
+  createdAt  DateTime @db.Timestamptz
+  updatedAt  DateTime @db.Timestamptz
+}

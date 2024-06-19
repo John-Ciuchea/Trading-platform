@@ -1,0 +1,20 @@
+include:
+  - ./seller-service/compose.yml
+  - ./buyer-service/compose.yml
+
+services:
+  nats:
+    build:
+      context: ./docker/nats
+    ports:
+      - ${NATS_PORT:-4222}:4222
+    volumes:
+      - nats-data:/nats/jetstream
+    networks:
+      - nats
+
+networks:
+  nats:
+
+volumes:
+  nats-data:

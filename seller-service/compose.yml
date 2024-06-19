@@ -1,0 +1,16 @@
+services:
+  ss-postgres:
+    image: postgres
+    environment:
+      - POSTGRES_USER=${APP_DB_USER}
+      - POSTGRES_PASSWORD=${APP_DB_PASS}
+      - POSTGRES_DB=${APP_DB_DATABASE}
+      - POSTGRES_TEST_DB=${APP_TEST_DB}
+    ports:
+      - ${APP_DB_PORT}:5432
+    volumes:
+      - ss-pg-data:/var/lib/postgresql
+      - ./../docker/postgres/init-test-db.sh:/docker-entrypoint-initdb.d/init-test-db.sh
+
+volumes:
+  ss-pg-data:
